@@ -27,7 +27,7 @@
                     <td>{{$item->name}}</td>
                     <td>{{$item->slug}}</td>
                     <td>
-                        <img src="{{asset($item->image)}}" class="avatar avatar-sm me-3 border-radius-lg" alt="image" width="50px" height="50px">
+                        <img src="{{asset($item->image)}}" class="avatar avatar-sm me-3 border-radius-lg" alt="image" width="50px">
                     </td>
                     <td>{{$item->description}}</td>
                     <td>{{$item->sale_precent}}</td>
@@ -71,8 +71,8 @@
                                 </form>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">
-
+                                <a class="dropdown-item" href="{{route('admin.products.image', $item->id) }}">
+                                    Product Image
                                 </a>
                             </li>
                         </ul>

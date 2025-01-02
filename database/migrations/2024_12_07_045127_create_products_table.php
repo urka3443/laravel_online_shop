@@ -20,7 +20,7 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->string('image')->nullable();
             $table->bigInteger('price');
-            $table->integer('sale_precent');
+            $table->integer('sale_percent');
             $table->integer('quantity');
             $table->tinyInteger('status')->default(0);
             $table->tinyInteger('trending')->default(0);

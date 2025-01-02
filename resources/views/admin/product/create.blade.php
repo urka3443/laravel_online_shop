@@ -38,19 +38,18 @@
                             <div class="tab-content" id="pills-tabContent">
                                 <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
                                     <div class="mb-3">
-                                        <select name="brand_id" class="form-control" id="brand_id" required>
-                                            <option>Select Brand</option>
-                                            @foreach($brands as $brand)
-                                                <option value="{{$brand->id}}">{{$brand->name}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
                                         <select name="category_id" class="form-control" id="category_id" required>
                                             <option>Select Category</option>
                                             @foreach($categories as $category)
                                                 <option value="{{$category->id}}">{{$category->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <select name="brand_id" class="form-control" id="brand_id" required>
+                                            <option>Select Brand</option>
+                                            @foreach($brands as $brand)
+                                                <option value="{{$brand->id}}">{{$brand->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -79,20 +78,20 @@
 
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-control">Price</label>
-                                        <input type="number" name="price">
+                                        <label >Price</label>
+                                        <input type="number" name="price" class="form-control">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-control">Sale Percent</label>
-                                        <input type="number" name="sale_percent" max="100">
+                                        <input type="number" name="sale_percent" max="100" class="form-control">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-control">Quantity</label>
-                                        <input type="number" name="quantity">
+                                        <input type="number" name="quantity" class="form-control">
                                     </div>
                                     <div class="mb-3">
                                         <label for="trending">Trending</label>
-                                        <input type="checkbox" name="trending">
+                                        <input type="checkbox" name="trending" class="form-checkbox">
                                     </div>
 
                                     <div class="mb-3">

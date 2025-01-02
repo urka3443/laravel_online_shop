@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Request\ProductFromRequest;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -70,39 +71,40 @@ class ProductController extends Controller
         $products = Product::query()->findOrFail($id);
         $brands = Brand::all();
         $categories = Category::all();
-        return view('admin.products.edit', compact('products','brands','categories'));
+        return view('admin.product.edit', compact('products','brands','categories'));
     }
 
-    public function update(request $request, $id){
+    public function update(Request $request, $id) {
         $validatedData = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'name' => 'required|string',
             'price' => 'required|numeric',
             'quantity' => 'required|numeric',
-            'slug' => 'required|unique:products,slug',
+            'slug' => 'required|unique:products,slug,' . $id,
             'description' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'sale_percent' => 'required|numeric',
             'status' => 'nullable',
             'trending' => 'nullable',
         ]);
-
-        $brands = Brand::query()->find($id);
-        if($request->hasFile('image')){
-            $destination=$brands->image;
-            if(File::exists($destination)){
+    
+        $products = Product::query()->findOrFail($id);
+    
+        if ($request->hasFile('image')) {
+            $destination = public_path($products->image);
+            if (File::exists($destination)) {
                 File::delete($destination);
             }
             $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $dilename = time() . '.' . $extension;
-            $file->move('uploads/product/', $filename);
-
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/product/'), $filename);
             $validatedData['image'] = 'uploads/product/' . $filename;
+        } else {
+            $validatedData['image'] = $products->image;
         }
-
-        $products = Product::query()->findOrFail($id)->update([
+    
+        $products->update([
             'category_id' => $validatedData['category_id'],
             'brand_id' => $validatedData['brand_id'],
             'name' => $validatedData['name'],
@@ -112,21 +114,64 @@ class ProductController extends Controller
             'description' => $validatedData['description'],
             'image' => $validatedData['image'],
             'sale_percent' => $validatedData['sale_percent'],
-            'status' => $request->true ? 1 : 0,
-            'trending' => $request->true ? 1 : 0,
+            'status' => $request->has('status') ? 1 : 0,
+            'trending' => $request->has('trending') ? 1 : 0,
         ]);
+    
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully');
+    }
+    
+    public function image($id){
+        $products = Product::query()->FindOrFail($id);
+
+        return view('admin.product.image', compact('products'));
+    }
+
+    public function imageStore(Request $request,$id){
+        $products = Product::query()->findOrFail($id);
+
+        if($request->hasFile('image')){
+            $uploadPath = 'uploads/product/images/';
+
+            $i = 1;
+            foreach($request->file('image') as $file) {
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . $i++ . '.' . $extension;
+                $file->move($uploadPath, $filename);
+                $finalImagePathName = $uploadPath . $filename;
+
+                $products->productImages()->create([
+                    'product_id' => $products->id,
+                    'image' => $finalImagePathName,
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Product image updated successfully');
+    }
+
+    public function imageDestroy($id){
+        $image = ProductImage::query()->findOrFail($id);
+
+        if(File::exists($image->image)){
+            File::delete($image->image);
+        }
+
+        $image->delete();
+        return redirect()->route('admin.products.index')->with('success', 'Product image deleted successfully');
     }
 
     public function destroy($id){
-        $products = Product::query()->FindOrFail($id);
-        $destination = $products->image;
-        If(File::exists($destination)){
+        $products = Product::query()->findOrFail($id);
+        $destination=$products->image;
+        if(File::exists($destination)){
             File::delete($destination);
         }
         $products->delete();
-        return redirect()->route('admin.products.index')->with('success','Product deleted successfully');
+        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully');
     }
+
+
 
    
 }

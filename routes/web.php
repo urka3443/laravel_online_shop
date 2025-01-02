@@ -8,7 +8,11 @@ use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('user.dashboard');
+});
+Route::controller(\App\Http\Controllers\FrontEnd\ProductController::class)->group(function(){
+    Route::get('/','index')->name('user.index');
+
 });
 
 Route::get('/dashboard', function () {
@@ -57,6 +61,11 @@ Route::middleware(['auth',AdminMiddleware::class])->group(function(){
         Route::get('admin/products/edit/{id}', 'edit')->name("admin.products.edit");
         Route::put('admin/products/{id}', 'update')->name("admin.products.update");
         Route::delete('admin/products/{id}', 'destroy')->name("admin.products.destroy");
+
+        Route::get('admin/products/image/{id}', 'image')->name("admin.products.image");
+        Route::post('admin/products/image/{id}', 'imageStore')->name("admin.products.image.store");
+        Route::delete('admin/products/image/{id}', 'imageDestroy')->name("admin.products.image.destroy");
+
     });
     
     
